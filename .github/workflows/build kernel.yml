@@ -92,7 +92,7 @@ jobs:
              cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
               export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$PATH
               echo "CONFIG_BUILD_ARM64_KERNEL_COMPRESSION_GZIP=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ env.KERNEL_DEFCONFIG }}
-              echo "CONFIG_FB_CFB_IMAGEBLIT=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ tool/Core/env.KERNEL_DEFCONFIG }}
+              echo "CONFIG_FB_CFB_IMAGEBLIT=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ env.KERNEL_DEFCONFIG }}
               export KBUILD_BUILD_HOST=Github-Action
               export KBUILD_BUILD_USER=$(echo ${{ github.actor }} | tr A-Z a-z)
              #设置内核在设置中名称,上为自定义,下为自动生成
