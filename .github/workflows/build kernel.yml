@@ -126,19 +126,6 @@ jobs:
                     cp android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/dtbo.img anykernel/
                 fi
                 rm -rf anykernel/.git* anykernel/README.md
-
-          - name: "❤️ 制作boot image"
-            if: env.HAVE_SOURCE_BOOT_IMAGE == 'true' && env.CHECK_FILE_IS_OK == 'true'
-            run: |
-                cd $GITHUB_WORKSPACE/kernel_workspace
-                tools/unpack_bootimg.py --boot_img boot-source.img
-                cp android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/${{ env.KERNEL_FILE }} out/kernel
-                tools/mkbootimg.py ${{ env.FORMAT_MKBOOTING }} -o boot.img
-                if [ -f boot.img ]; then
-                    echo "MAKE_BOOT_IMAGE_IS_OK=true" >> $GITHUB_ENV
-                else
-                    echo "Boot image is empty"
-                fi
     
           - name: "😎 打包合并 AnyKernel3.sh"
             if: env.CHECK_FILE_IS_OK == 'true'
@@ -146,11 +133,4 @@ jobs:
             with:
               name: ${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
               path: kernel_workspace/anykernel/*
-
-          - name: "😎 打包合并 boot image"
-            if: env.MAKE_BOOT_IMAGE_IS_OK == 'true'
-            uses: actions/upload-artifact@v3
-            with:
-                name: boot${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
-                path: kernel_workspace/boot.img
        
