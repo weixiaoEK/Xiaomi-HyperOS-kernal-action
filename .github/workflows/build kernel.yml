@@ -125,7 +125,7 @@ jobs:
                 git clone https://github.com/123456mi/AnyKernel3 -b cepheus anykernel
                 cp android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/${{ env.KERNEL_FILE }} anykernel/
                 rm -rf anykernel/anykernel.sh
-                cp $GITHUB_WORKSPACE/anykernel.sh anykernel/
+                cp $GITHUB_WORKSPACE/tool/anykernel.sh anykernel/
                 if [ ${{ env.CHECK_DTBO_IS_OK }} = true ]; then
                     cp android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/dtbo.img anykernel/
                 fi
