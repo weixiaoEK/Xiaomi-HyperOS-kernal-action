@@ -53,6 +53,13 @@ jobs:
               git clone --depth=2 https://github.com/arter97/exfat-linux $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/exfat
               git submodule update --init
 
+          - name: "🚄 建立 ccache 储存"
+            if: env.ENABLE_CCACHE == 'true'
+            uses: hendrikmuhs/ccache-action@v1.2
+            with:
+              key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
+              max-size: 2G
+              
           - name: "😋 添加并设置KernelSU"
             if: env.USE_KERNELSU == 'true'
             run: |
@@ -86,13 +93,6 @@ jobs:
               key: ccache-${{ env.KERNEL_NAME }}-${{ steps.ccache_key.outputs.CACHE_KEY }}-${{ env.builddate }}
               restore-keys: |
                 ccache-${{ env.KERNEL_NAME }}-${{ steps.ccache_key.outputs.CACHE_KEY }}-${{ env.builddate }}
-          
-          - name: "🚄 建立 ccache 储存"
-            if: env.ENABLE_CCACHE == 'true'
-            uses: hendrikmuhs/ccache-action@v1.2
-            with:
-              key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
-              max-size: 2G
 
           - name: "🚄 构建内核"
             run: |
