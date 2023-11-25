@@ -58,7 +58,7 @@ jobs:
              git submodule update --init
 
           - name: "😋 添加并设置KernelSU"
-            if: tool/Core/env.USE_KERNELSU == 'true'
+            if: env.USE_KERNELSU == 'true'
             run: |
               cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
               #此处为修改KSU分支,目前为开发分支,稳定分支去除s main
@@ -81,7 +81,7 @@ jobs:
               echo "UPLOADNAME=KernelSU" >> $GITHUB_ENV
 
           - name: "建立 ccache 储存"
-            if: tool/Core/env.ENABLE_CCACHE == 'true'
+            if: env.ENABLE_CCACHE == 'true'
             uses: hendrikmuhs/ccache-action@v1.2
             with:
               key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
