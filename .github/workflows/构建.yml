@@ -80,6 +80,13 @@ jobs:
               fi
               echo "UPLOADNAME=KernelSU" >> $GITHUB_ENV
 
+          - name: "建立 ccache 储存"
+            if: env.ENABLE_CCACHE == 'true'
+            uses: hendrikmuhs/ccache-action@v1.2
+            with:
+              key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
+              max-size: 2G
+
           - name: "😎 构建内核"
             run: |
              cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -96,7 +103,7 @@ jobs:
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }} ${{ env.KERNEL_DEFCONFIG }}
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }}
 
-          - name: "💛 Check a kernel output files"
+          - name: "💛 输出一个内核文件"
             run: |
                cd $GITHUB_WORKSPACE/kernel_workspace
                if [ -f android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/${{ env.KERNEL_FILE }} ]; then
@@ -110,7 +117,7 @@ jobs:
                    echo "DTBO image is empty"
                fi
 
-          - name: "💙 Make Anykernel3"
+          - name: "💙制作 Anykernel3.sh"
             if: env.CHECK_FILE_IS_OK == 'true'
             run: |
                 cd $GITHUB_WORKSPACE/kernel_workspace
@@ -128,7 +135,7 @@ jobs:
                 fi
                 rm -rf anykernel/.git* anykernel/README.md
 
-          - name: "💜 Make boot image"
+          - name: "💜 制作boot image"
             if: env.HAVE_SOURCE_BOOT_IMAGE == 'true' && env.CHECK_FILE_IS_OK == 'true'
             run: |
                 cd $GITHUB_WORKSPACE/kernel_workspace
@@ -141,14 +148,14 @@ jobs:
                     echo "Boot image is empty"
                 fi
     
-          - name: "❤️ Upload AnyKernel3"
+          - name: "❤️ 打包合并 AnyKernel3.sh"
             if: env.CHECK_FILE_IS_OK == 'true'
             uses: actions/upload-artifact@v3
             with:
               name: ${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
               path: kernel_workspace/anykernel/*
 
-          - name: "❤️ Upload boot image"
+          - name: "❤️ 打包合并 boot image"
             if: env.MAKE_BOOT_IMAGE_IS_OK == 'true'
             uses: actions/upload-artifact@v3
             with:
