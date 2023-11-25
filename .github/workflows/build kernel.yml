@@ -76,6 +76,17 @@ jobs:
               fi
               echo "UPLOADNAME=KernelSU" >> $GITHUB_ENV
 
+          - name: "🚅 Cache ccache files"
+            if: ${{ env.ENABLE_CCACHE == 'true' }}
+            uses: actions/cache@v3
+            with:
+              path: |
+                ~/.ccache
+                ${{ env.OUT_DIR }}
+              key: ccache-${{ env.KERNEL_NAME }}-${{ steps.ccache_key.outputs.CACHE_KEY }}-${{ env.builddate }}
+              restore-keys: |
+                ccache-${{ env.KERNEL_NAME }}-${{ steps.ccache_key.outputs.CACHE_KEY }}-${{ env.builddate }}
+          
           - name: "🚄 建立 ccache 储存"
             if: env.ENABLE_CCACHE == 'true'
             uses: hendrikmuhs/ccache-action@v1.2
