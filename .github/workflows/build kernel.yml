@@ -99,7 +99,7 @@ jobs:
               sed -i 's/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/' arch/arm64/configs/cepheus_defconfig
               # sed -i 's/# CONFIG_LOCALVERSION_AUTO is not set/CONFIG_LOCALVERSION_AUTO=y/' arch/arm64/configs/cepheus_defconfig
               rm -f scripts/mkcompile_h
-              cp $GITHUB_WORKSPACE/mkcompile_h scripts/
+              cp $GITHUB_WORKSPACE/tool/mkcompile_h scripts/
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }} ${{ env.KERNEL_DEFCONFIG }}
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }}
 
