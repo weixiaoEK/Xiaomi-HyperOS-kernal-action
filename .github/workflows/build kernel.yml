@@ -24,6 +24,7 @@ jobs:
               echo "USE_KERNELSU=$(cat config.env | grep "USE_KERNELSU" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
               echo "USE_KPROBES=$(cat config.env | grep "USE_KPROBES" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
               echo "USE_OVERLAYFS=$(cat config.env | grep "USE_OVERLAYFS" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+              echo "ENABLE_CCACHE=$(cat $CONFIG_ENV | grep -w "ENABLE_CCACHE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
               echo "NEED_DTBO=$(cat config.env | grep "NEED_DTBO" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
               echo "MAKE_BOOT_IMAGE=$(cat config.env | grep "MAKE_BOOT_IMAGE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
               echo "SOURCE_BOOT_IMAGE=$(cat config.env | grep "SOURCE_BOOT_IMAGE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
@@ -42,12 +43,7 @@ jobs:
               cd $GITHUB_WORKSPACE/kernel_workspace
               mkdir clang-aosp
               git clone --depth=1 https://github.com/kdrag0n/proton-clang  $GITHUB_WORKSPACE/kernel_workspace/clang-aosp
-          - name: "🚅 下载制造boot.img镜像工具"
-            if: env.MAKE_BOOT_IMAGE == 'true'
-            run: |
-              cd $GITHUB_WORKSPACE/kernel_workspace
-              git clone https://android.googlesource.com/platform/system/tools/mkbootimg tools -b master-kernel-build-2022 --depth=1
-          
+                   
           - name: "🚅 下载同步内核源码"
             run: |
               cd $GITHUB_WORKSPACE/kernel_workspace
@@ -80,14 +76,14 @@ jobs:
               fi
               echo "UPLOADNAME=KernelSU" >> $GITHUB_ENV
 
-          - name: "建立 ccache 储存"
+          - name: "🚄 建立 ccache 储存"
             if: env.ENABLE_CCACHE == 'true'
             uses: hendrikmuhs/ccache-action@v1.2
             with:
               key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
               max-size: 2G
 
-          - name: "😎 构建内核"
+          - name: "🚄 构建内核"
             run: |
              cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
               export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$PATH
@@ -103,7 +99,7 @@ jobs:
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }} ${{ env.KERNEL_DEFCONFIG }}
               make -j$(nproc --all) O=out ARCH=${{ env.TARGET_ARCH }} CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- ${{ env.BUILD_EXTRA_COMMAND }}
 
-          - name: "💛 输出一个内核文件"
+          - name: "🐎 输出一个内核文件"
             run: |
                cd $GITHUB_WORKSPACE/kernel_workspace
                if [ -f android-kernel/out/arch/${{ env.TARGET_ARCH }}/boot/${{ env.KERNEL_FILE }} ]; then
@@ -117,7 +113,7 @@ jobs:
                    echo "DTBO image is empty"
                fi
 
-          - name: "💙制作 Anykernel3.sh"
+          - name: "🐎 制作 Anykernel3.sh"
             if: env.CHECK_FILE_IS_OK == 'true'
             run: |
                 cd $GITHUB_WORKSPACE/kernel_workspace
@@ -131,7 +127,7 @@ jobs:
                 fi
                 rm -rf anykernel/.git* anykernel/README.md
 
-          - name: "💜 制作boot image"
+          - name: "❤️ 制作boot image"
             if: env.HAVE_SOURCE_BOOT_IMAGE == 'true' && env.CHECK_FILE_IS_OK == 'true'
             run: |
                 cd $GITHUB_WORKSPACE/kernel_workspace
@@ -144,14 +140,14 @@ jobs:
                     echo "Boot image is empty"
                 fi
     
-          - name: "❤️ 打包合并 AnyKernel3.sh"
+          - name: "😎 打包合并 AnyKernel3.sh"
             if: env.CHECK_FILE_IS_OK == 'true'
             uses: actions/upload-artifact@v3
             with:
               name: ${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
               path: kernel_workspace/anykernel/*
 
-          - name: "❤️ 打包合并 boot image"
+          - name: "😎 打包合并 boot image"
             if: env.MAKE_BOOT_IMAGE_IS_OK == 'true'
             uses: actions/upload-artifact@v3
             with:
