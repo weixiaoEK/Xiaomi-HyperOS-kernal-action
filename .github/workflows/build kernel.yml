@@ -51,14 +51,14 @@ jobs:
           - name: "🚅 下载同步内核源码"
             run: |
              cd $GITHUB_WORKSPACE/kernel_workspace
-             git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=2
+             git clone ${{ tool/Core/env.KERNEL_SOURCE }} -b ${{ tool/Core/env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=2
              rm -rf $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/exfat
              mkdir -p $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/exfat
              git clone --depth=2 https://github.com/arter97/exfat-linux $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/exfat
              git submodule update --init
 
           - name: "😋 添加并设置KernelSU"
-            if: env.USE_KERNELSU == 'true'
+            if: tool/Core/env.USE_KERNELSU == 'true'
             run: |
               cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
               #此处为修改KSU分支,目前为开发分支,稳定分支去除s main
@@ -81,7 +81,7 @@ jobs:
               echo "UPLOADNAME=KernelSU" >> $GITHUB_ENV
 
           - name: "建立 ccache 储存"
-            if: env.ENABLE_CCACHE == 'true'
+            if: tool/Core/env.ENABLE_CCACHE == 'true'
             uses: hendrikmuhs/ccache-action@v1.2
             with:
               key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
@@ -92,7 +92,7 @@ jobs:
              cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
               export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$PATH
               echo "CONFIG_BUILD_ARM64_KERNEL_COMPRESSION_GZIP=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ env.KERNEL_DEFCONFIG }}
-              echo "CONFIG_FB_CFB_IMAGEBLIT=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ env.KERNEL_DEFCONFIG }}
+              echo "CONFIG_FB_CFB_IMAGEBLIT=y" >> arch/${{ env.TARGET_ARCH }}/configs/${{ tool/Core/env.KERNEL_DEFCONFIG }}
               export KBUILD_BUILD_HOST=Github-Action
               export KBUILD_BUILD_USER=$(echo ${{ github.actor }} | tr A-Z a-z)
              #设置内核在设置中名称,上为自定义,下为自动生成
