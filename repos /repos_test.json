@@ -2,7 +2,7 @@
   {
     "kernelSource": {
       "name": "cepheus_KernelSU_Xiaomi-HyperOS-test",
-      "repo": "https://github.com/Xirudly/kernel_xiaomi_cepheus",
+      "repo": "https://github.com/123456mi/kernel_xiaomi_cepheus-hyperos",
       "branch": "test",
       "device": "cepheus",
       "defconfig": "cepheus_defconfig"
