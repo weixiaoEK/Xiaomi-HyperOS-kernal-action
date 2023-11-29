@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-kernel:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - name: Download clang
@@ -20,7 +20,7 @@ jobs:
           
       - name: Build kernel
         run: |
-          export KBUILD_BUILD_USER="Size"
+          export KBUILD_BUILD_USER="Xirudly"
           export KBUILD_BUILD_HOST="Cepheus-Kernel"
           args="                  O=out \
                                   ARCH=arm64 \
@@ -35,13 +35,15 @@ jobs:
           echo "CONFIG_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_HAVE_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig          
-          make ${args} cepheus_defconfig && make ${args}
+          make ${args} cepheus_defconfig && make -j$(nproc --all) ${args}
           
       - name: Package kernel
         run: |
-          git clone https://github.com/123456mi/AnyKernel3 -b cepheus
-          cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
-          cp out/arch/arm64/boot/dtbo.img AnyKernel3/
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/123456mi/AnyKernel3 cepheus --depth=1
+          rm -rf AnyKernel3/.git
+          cp kernel/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+          cp kernel/out/arch/arm64/boot/dtbo.img AnyKernel3/
 
       - name: Upload kernel
         uses: actions/upload-artifact@v3
