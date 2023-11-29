@@ -16,11 +16,11 @@ jobs:
       
       - name: Download kernel
         run: |
-          git clone https://github.com/Xirudly/kernel_xiaomi_cepheus -b 14 kernel --depth=1
+          git clone https://github.com/123456mi/kernel_xiaomi_cepheus-hyperos -b main kernel --depth=1
           
       - name: Build kernel
         run: |
-          export KBUILD_BUILD_USER="Xirudly"
+          export KBUILD_BUILD_USER="Size"
           export KBUILD_BUILD_HOST="Cepheus-Kernel"
           args="                  O=out \
                                   ARCH=arm64 \
@@ -40,7 +40,7 @@ jobs:
       - name: Package kernel
         run: |
           cd $GITHUB_WORKSPACE
-          git clone https://github.com/123456mi/AnyKernel3 cepheus --depth=1
+          git clone https://github.com/123456mi/AnyKernel3
           rm -rf AnyKernel3/.git
           cp kernel/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
           cp kernel/out/arch/arm64/boot/dtbo.img AnyKernel3/
