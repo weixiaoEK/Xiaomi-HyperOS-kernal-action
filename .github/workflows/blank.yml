@@ -221,6 +221,7 @@ jobs:
           args: ${{ steps.generate-args.outputs.args }}
         run: |
           echo "PATH Variable: $PATH"
+          sed -i 's/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/' arch/arm64/configs/cepheus_defconfig
           make ${{ env.args }}
 
       - name: "💛 Upload Image"
