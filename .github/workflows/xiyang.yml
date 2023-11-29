@@ -1,0 +1,50 @@
+name: action_kernel
+
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download clang
+        run: |
+          git clone https://github.com/kdrag0n/proton-clang clang --depth=1
+      
+      - name: Download kernel
+        run: |
+          git clone https://github.com/Xirudly/kernel_xiaomi_cepheus -b 14 kernel --depth=1
+          
+      - name: Build kernel
+        run: |
+          export KBUILD_BUILD_USER="Size"
+          export KBUILD_BUILD_HOST="Cepheus-Kernel"
+          args="                  O=out \
+                                  ARCH=arm64 \
+                                  SUBARCH=arm64 \
+                                  CC=$GITHUB_WORKSPACE/clang/bin/clang \
+                                  CLANG_TRIPLE=aarch64-linux-gnu- \
+                                  CROSS_COMPILE=$GITHUB_WORKSPACE/clang/bin/aarch64-linux-gnu- \
+                                  CROSS_COMPILE_ARM32=$GITHUB_WORKSPACE/clang/bin/arm-linux-gnueabi- "
+          cd kernel          
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main          
+          echo "CONFIG_MODULES=y" >> arch/arm64/configs/cepheus_defconfig
+          echo "CONFIG_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
+          echo "CONFIG_HAVE_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
+          echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig          
+          make ${args} cepheus_defconfig && make ${args}
+          
+      - name: Package kernel
+        run: |
+          git clone https://github.com/123456mi/AnyKernel3 -b cepheus
+          cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+          cp out/arch/arm64/boot/dtbo.img AnyKernel3/
+
+      - name: Upload kernel
+        uses: actions/upload-artifact@v3
+        with:
+          name: kernel_cepheus
+          path: AnyKernel3/*
