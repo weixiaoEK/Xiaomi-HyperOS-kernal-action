@@ -199,10 +199,11 @@ jobs:
 
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
 
-          echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          
+          echo "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
       - name: "👍 Make defconfig"
@@ -292,12 +293,3 @@ jobs:
         with:
           name: "${{ env.KERNEL_DEVICE }}-${{ env.KERNEL_NAME }}_${{ env.builddate }}"
           path: AnyKernel3/*
-
-      - name: 🧧 Create GitHub Release => (${{ env.builddate }})
-        continue-on-error: true
-        uses: softprops/action-gh-release@v1
-        if: ${{ env.useAnykernel == 'true' && env.release == 'true' }}
-        with:
-          tag_name: v${{ env.builddate }}.${{ github.run_number }}
-          files: "${{ env.WORKSPACE }}/${{ env.KERNEL_DEVICE }}-${{ env.KERNEL_NAME }}_${{ env.builddate }}.zip"
-          generate_release_notes: true
