@@ -1,9 +1,9 @@
 [
   {
     "kernelSource": {
-      "name": "cepheus_KernelSU_Xiaomi-HyperOS-main",
-      "repo": "https://github.com/123456mi/kernel_xiaomi_cepheus-hyperos",
-      "branch": "main",
+      "name": "cepheus_KernelSU_Xiaomi-HyperOS_cepheus-main",
+      "repo": "https://github.com/Xirudly/kernel_xiaomi_cepheus",
+      "branch": "14",
       "device": "cepheus",
       "defconfig": "cepheus_defconfig"
     },
