@@ -13,12 +13,8 @@ jobs:
       - name: Download clang & kernel source
         run: |
           git clone https://gitlab.com/jjpprrrr/prelude-clang clang --depth=1
-          git clone https://github.com/Xirudly/kernel_xiaomi_cepheus -b 14 kernel --depth=1
-          
-      - name: Download kernel
-        run: |
           git clone https://github.com/123456mi/kernel_xiaomi_cepheus-hyperos -b 14 kernel --depth=1
-          
+        
       - name: Build kernel
         run: |
           export KBUILD_BUILD_USER="Size"
@@ -31,7 +27,7 @@ jobs:
                                   CROSS_COMPILE=$GITHUB_WORKSPACE/clang/bin/aarch64-linux-gnu- \
                                   CROSS_COMPILE_ARM32=$GITHUB_WORKSPACE/clang/bin/arm-linux-gnueabi- "
           cd kernel          
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main --depth=1
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
           sed -i 's/HyperOS/android14-Xiaomi_HyperOS/g' arch/arm64/configs/cepheus_defconfig
           sed -i 's/# CONFIG_MODULES is not set/CONFIG_MODULES=y/g' arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_MODULES=y" >> arch/arm64/configs/cepheus_defconfig
@@ -51,5 +47,6 @@ jobs:
       - name: Upload kernel
         uses: actions/upload-artifact@v3
         with:
-          name: kernel_cepheus
+          name: Xiaomi-HyperOS-for-cepheus
           path: AnyKernel3/*
+          
