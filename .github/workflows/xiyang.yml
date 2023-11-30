@@ -17,7 +17,7 @@ jobs:
         
       - name: Build kernel
         run: |
-          export KBUILD_BUILD_USER="Size"
+          export KBUILD_BUILD_USER="123456mi"
           export KBUILD_BUILD_HOST="Cepheus-Kernel"
           args="                  O=out \
                                   ARCH=arm64 \
