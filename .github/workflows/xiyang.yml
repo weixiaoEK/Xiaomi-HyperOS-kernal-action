@@ -34,7 +34,8 @@ jobs:
           echo "CONFIG_MODULES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_HAVE_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
-          echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig          
+          echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig
+          sed -i 's/CONFIG_LOCALVERSION="-android14-Xiaomi_HyperOS"/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/' arch/arm64/configs/cepheus_defconfig
           make ${args} cepheus_defconfig && make -j$(nproc --all) ${args}
           
       - name: Package kernel
