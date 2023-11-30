@@ -7,13 +7,14 @@ on:
 
 jobs:
   build-kernel:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download clang
+      - name: Download clang & kernel source
         run: |
-          git clone https://github.com/kdrag0n/proton-clang clang --depth=1
-      
+          git clone https://gitlab.com/jjpprrrr/prelude-clang clang --depth=1
+          git clone https://github.com/Xirudly/kernel_xiaomi_cepheus -b 14 kernel --depth=1
+          
       - name: Download kernel
         run: |
           git clone https://github.com/123456mi/kernel_xiaomi_cepheus-hyperos -b 14 kernel --depth=1
