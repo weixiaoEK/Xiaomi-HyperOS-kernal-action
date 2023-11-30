@@ -30,18 +30,19 @@ jobs:
                                   CROSS_COMPILE=$GITHUB_WORKSPACE/clang/bin/aarch64-linux-gnu- \
                                   CROSS_COMPILE_ARM32=$GITHUB_WORKSPACE/clang/bin/arm-linux-gnueabi- "
           cd kernel          
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main          
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main --depth=1
+          sed -i 's/HyperOS/android14-Xiaomi_HyperOS/g' arch/arm64/configs/cepheus_defconfig
+          sed -i 's/# CONFIG_MODULES is not set/CONFIG_MODULES=y/g' arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_MODULES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
           echo "CONFIG_HAVE_KPROBES=y" >> arch/arm64/configs/cepheus_defconfig
-          echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig
-          sed -i 's/CONFIG_LOCALVERSION="-android14-Xiaomi_HyperOS"/CONFIG_LOCALVERSION="-Xiaomi_HyperOS-A14"/' arch/arm64/configs/cepheus_defconfig
+          echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/cepheus_defconfig          
           make ${args} cepheus_defconfig && make -j$(nproc --all) ${args}
           
       - name: Package kernel
         run: |
           cd $GITHUB_WORKSPACE
-          git clone https://github.com/123456mi/AnyKernel3
+          git clone https://github.com/123456mi/AnyKernel3 --depth=1
           rm -rf AnyKernel3/.git
           cp kernel/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
           cp kernel/out/arch/arm64/boot/dtbo.img AnyKernel3/
